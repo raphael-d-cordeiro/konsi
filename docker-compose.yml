@@ -7,6 +7,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - 8000:8000
+    networks:
+      - konsi
+
   rabbitmq:
     image: rabbitmq:latest
     container_name: 'rabbitmq'
@@ -16,7 +19,35 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=123
+    networks:
+      - konsi
+
   konsi_worker:
     build: ./konsi_worker
     depends_on:
       - rabbitmq
+    networks:
+      - konsi
+    environment:
+      - DATABASE_USER=postgres
+      - DATABASE_PWD=postgres
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=konsi
+
+  postgres:
+    image: postgres:14.1-alpine
+    restart: always
+    hostname: postgres
+    environment:
+      - POSTGRES_DB=konsi
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+    networks:
+      - konsi
+
+networks:
+  konsi:
+    driver: bridge

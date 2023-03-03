@@ -9,3 +9,4 @@ asyncpg==0.26.0
 email-validator
 celery>=5.2
 requests==2.28.2
+python-dotenv
