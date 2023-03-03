@@ -1,25 +1,26 @@
-from typing import Literal, Optional, List, Dict, Any
+import os
 
 from sqlalchemy.engine import URL
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import text
 
-import os
+from dotenv import load_dotenv
 
 
-class Postgres:
+load_dotenv()
 
-    def __init__(self, user: str, pwd: str, server_name: str,
-                 database: str, port: str = '5432'):
+
+class DBConnection:
+
+    def __init__(self):
 
         self._db_url: URL = URL.create(
             drivername='postgresql+psycopg2',
-            username=os.getenv('USER'),
-            password=os.getenv('PWD'),
-            host=os.getenv('HOST'),
-            database=os.getenv('DATABASE'),
-            port=port,
+            username=os.environ.get('DATABASE_USER'),
+            password=os.environ.get('DATABASE_PWD'),
+            host=os.environ.get('DATABASE_HOST'),
+            database=os.environ.get('DATABASE_NAME'),
+            port=os.environ.get('DATABASE_PORT')
         )
 
     def get_engine(self):
@@ -29,52 +30,17 @@ class Postgres:
             connect_args={'connect_timeout': 20}
         )
 
-    def get_session(self):
+    def __enter__(self):
         engine = self.get_engine()
-
-        return sessionmaker(
+        session_maker = sessionmaker(
             autocommit=False,
             autoflush=False,
             expire_on_commit=False,
             bind=engine
         )
+        self.session = session_maker(bind=engine)
 
-    def execute_query(self, query_string: str, query_type: Literal['r', 'w'],
-                      **kwargs):
-        Engine = self.get_engine()
+        return self
 
-        _query_stmt = text(query_string)
-
-        with Engine.connect() as connection:
-            if query_type == 'r':
-                result = connection.execute(_query_stmt, **kwargs)
-
-                if not result:
-                    return
-
-                result_data = [dict(row._mapping) for row in result]
-
-                return result_data
-
-            connection.execute(_query_stmt, **kwargs)
-
-        return
-
-    def read_sql_file(self,
-                      sql_path: str,
-                      name: str):
-        if name[-4:] != ".sql":
-            name += ".sql"
-        file_ = os.path.join(sql_path, name)
-        with open(file_, 'rU') as f:
-            return f.read()
-
-    def execute_from_file(self,
-                          sql_path: str,
-                          name: str,
-                          query_type: Literal['r', 'w'],
-                          **kwargs) -> Optional[List[Dict[str, Any]]]:
-
-        query_stmt = self.read_sql_file(sql_path, name)
-
-        return self.execute_query(query_stmt, query_type, **kwargs)
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.session.close()

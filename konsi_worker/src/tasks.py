@@ -1,15 +1,16 @@
-from time import sleep
+from typing import Dict, Any
+
 from konsi_worker.src.celery_app import celery_app
+from services import crawler
 
 
-@celery_app.task
-def dummy_task(s: int = 5):
-    print('starting dummy task')
-    sleep(s)
-    print('done')
-    return s
+@celery_app.task(bind=True)
+def run_crawler(self, body_request: Dict[str, Any]) -> int:
 
+    username = body_request['username']
+    password = body_request['password']
+    document = body_request['document']
 
-@celery_app.task
-def dummy_add(x: int, y: int) -> int:
-    return x + y
+    response = crawler.get_data(username, password, document)
+
+    return

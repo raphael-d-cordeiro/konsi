@@ -1,9 +1,8 @@
 from typing import Dict, Any
 import requests
-import json
 
 
-def get_data(username: str, password: str) -> Dict[str, Any]:
+def get_data(username: str, password: str, document: str) -> Dict[str, Any]:
 
     headers = {
         'Accept': 'application/json, text/plain, */*',
@@ -17,8 +16,8 @@ def get_data(username: str, password: str) -> Dict[str, Any]:
     }
 
     json_data = {
-        'login': 'testekonsi',
-        'senha': 'testekonsi',
+        'login': username,
+        'senha': password,
     }
 
     response = requests.post(
@@ -28,14 +27,18 @@ def get_data(username: str, password: str) -> Dict[str, Any]:
         verify=False,
     )
 
+    response.raise_for_status()
+
     response = requests.get(
-        'http://extratoblubeapp-env.eba-mvegshhd.sa-east-1.elasticbeanstalk.com/offline/listagem/074.687.335-20',
+        f'http://extratoblubeapp-env.eba-mvegshhd.sa-east-1.elasticbeanstalk.com/offline/listagem/{document}',
         headers=response.headers,
         verify=False,
     )
 
-    return
+    response.raise_for_status()
+
+    return response.json()
 
 
 if __name__ == '__main__':
-    get_data(None, None)
+    get_data('testekonsi', 'testekonsi', '074.687.335-20')

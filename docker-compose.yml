@@ -9,6 +9,12 @@ services:
       - 8000:8000
     networks:
       - konsi
+    environment:
+      - DATABASE_USER=postgres
+      - DATABASE_PWD=postgres
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=konsi
 
   rabbitmq:
     image: rabbitmq:latest
