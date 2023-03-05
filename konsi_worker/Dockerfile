@@ -1,12 +1,14 @@
 FROM python:3.10.8-slim-buster
 
+#Install
 WORKDIR /konsi_worker
-RUN mkdir -p konsi_worker/src
-COPY src/ konsi_worker/src
-COPY .env.debug .env
-COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+
+COPY ./requirements.txt /konsi_worker/requirements.txt
+
+RUN pip install --no-cache-dir --upgrade -r /konsi_worker/requirements.txt
+
+COPY . .
 
 # Run.
 CMD \
-  celery -A konsi_worker.src.celery_app worker -E --loglevel=INFO --concurrency=1 -Ofair
+  celery -A src.celery_app worker -E --loglevel=INFO --concurrency=1 -Ofair

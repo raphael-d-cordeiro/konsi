@@ -1,7 +1,7 @@
 from fastapi import APIRouter
-from konsi_api.src.api.v1.endpoints import bots
+from konsi_api.src.api.v1.endpoints import crawlers
 
 api_router = APIRouter()
 api_router.include_router(
-    bots.router, prefix='/bots', tags=['bots']
+    crawlers.router, prefix='/crawlers', tags=['crawlers']
 )

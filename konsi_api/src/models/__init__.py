@@ -1,5 +1,5 @@
-from konsi_api.src.models.bot_model import BotModel
+from .crawler_model import CrawlerModel
 
 __all__ = [
-    'BotModel',
+    'CrawlerModel',
 ]

@@ -1,10 +1,13 @@
 FROM python:3.10.8-slim-buster
 
 #Install
-WORKDIR /konsi
+WORKDIR /konsi_api
+
+COPY ./requirements.txt /konsi_api/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /konsi_api/requirements.txt
+
 COPY . .
-RUN pip3 install -r requirements.txt
 
 # Run.
 EXPOSE 8000
-CMD ["python", "konsi/konsi_api/src/main.py"]
+CMD ["python", "src/main.py"]
