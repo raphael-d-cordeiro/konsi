@@ -1,6 +1,6 @@
 from typing import Dict, Any
 
-from konsi_worker.src.celery_app import celery_app
+from konsi_worker.src.consumer import celery_app
 from services import crawler
 
 
