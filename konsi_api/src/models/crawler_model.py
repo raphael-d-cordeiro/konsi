@@ -1,3 +1,5 @@
+import datetime
+
 from core.configs import settings
 from sqlalchemy import Column, Integer, String, Date
 from sqlalchemy.dialects.postgresql import JSONB
@@ -14,4 +16,8 @@ class CrawlerModel(settings.DBBaseModel):
         index=True,
         nullable=True
     )
-    created_at: Date = Column(Date, index=True)
+    created_at: Date = Column(
+        Date,
+        default=datetime.datetime.utcnow,
+        index=True
+    )

@@ -53,7 +53,7 @@ async def get_crawlers_result(
 async def post_customer(request_body: CrawlerSchemaPost):
     try:
         celery_task = celery_app.send_task(
-            'konsi_worker.src.tasks.run_crawlers', args=[request_body.dict()]
+            'konsi_worker.src.tasks.run_crawler', args=[request_body.dict()]
         )
         payload = {
             'message': 'placed a task to run in background',

@@ -1,9 +1,13 @@
-from core.configs import settings
+import datetime
 from sqlalchemy import Column, Integer, String, Date
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.ext.declarative import declarative_base
 
 
-class CrawlerModel(settings.DBBaseModel):
+DBBaseModel = declarative_base()
+
+
+class CrawlerModel(DBBaseModel):
     __tablename__ = 'crawlers'
 
     id: int = Column(Integer, primary_key=True, autoincrement=True)
@@ -14,4 +18,8 @@ class CrawlerModel(settings.DBBaseModel):
         index=True,
         nullable=True
     )
-    created_at: Date = Column(Date, index=True)
+    created_at: Date = Column(
+        Date,
+        default=datetime.datetime.utcnow,
+        index=True
+    )
