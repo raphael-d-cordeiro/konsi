@@ -38,7 +38,3 @@ def get_data(username: str, password: str, document: str) -> Dict[str, Any]:
     response.raise_for_status()
 
     return response.json()
-
-
-if __name__ == '__main__':
-    get_data('testekonsi', 'testekonsi', '074.687.335-20')

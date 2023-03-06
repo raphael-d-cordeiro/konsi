@@ -11,4 +11,4 @@ COPY . .
 
 # Run.
 CMD \
-  celery -A src.consumer worker -E --loglevel=INFO --concurrency=1 -Ofair
+  celery -A src.celery_worker worker -E --loglevel=INFO --concurrency=1 -Ofair

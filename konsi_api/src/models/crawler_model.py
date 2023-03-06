@@ -11,7 +11,7 @@ class CrawlerModel(settings.DBBaseModel):
     id: int = Column(Integer, primary_key=True, autoincrement=True)
     task_id: str = Column(String(), unique=True, index=True, nullable=False)
     document: str = Column(String(20), index=True, nullable=False)
-    crawler_data: str = Column(
+    crawler_data: dict = Column(
         JSONB(),
         index=True,
         nullable=True

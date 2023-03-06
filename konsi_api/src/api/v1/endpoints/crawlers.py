@@ -13,18 +13,14 @@ from sqlalchemy.future import select
 
 from core.publisher import celery_app
 from models import CrawlerModel
-from schemas import (
-    CrawlerSchemaPost, CrawlerSchemaResp
-)
+from schemas import CrawlerSchemaPost
 from core.deps import get_session
 
 
 router = APIRouter()
 
 
-@router.get('/',
-            response_model=CrawlerSchemaResp,
-            status_code=status.HTTP_200_OK)
+@router.get('/', status_code=status.HTTP_200_OK)
 async def get_crawlers_result(
     task_id: str = Query(
         title='Task id to get results'
@@ -41,6 +37,11 @@ async def get_crawlers_result(
     results: List[CrawlerModel] = result.scalars().all()
 
     if results:
+        if crawler_filter_result == 'BENEFITS_NUMBERS_ONLY':
+            for result in results:
+                result.crawler_data = {'beneficios': [
+                    x.get('nb') for x in results[0].crawler_data['beneficios']
+                ]}
         return results
     else:
         raise HTTPException(

@@ -1,8 +1,7 @@
 from typing import Optional, Any
 
 from pydantic import BaseModel as SCBaseModel
-from pydantic import Json, root_validator
-from datetime import date
+from pydantic import root_validator
 
 
 class CrawlerSchemaPost(SCBaseModel):
@@ -32,14 +31,3 @@ class CrawlerSchemaPost(SCBaseModel):
                 "password": "teste",
             }
         }
-
-
-class CrawlerSchemaResp(SCBaseModel):
-    id: Optional[int]
-    task_id: str
-    document: str
-    crawler_data: Json[Any]
-    created_at: date
-
-    class Config:
-        orm_mode = True

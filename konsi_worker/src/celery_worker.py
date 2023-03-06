@@ -13,7 +13,8 @@ _REDIS_HOST = os.environ.get('REDIS_HOST')
 celery_app = Celery(
     "konsi_api",
     broker=f'amqp://{_AMPQ_USER}:{_AMPQ_PASS}@{_AMPQ_HOST}:5672//',
-    result_backend=f'redis://{_REDIS_HOST}:6379/0'
+    result_backend=f'redis://{_REDIS_HOST}:6379/0',
+    include=['konsi_worker.src.tasks']
 )
 
 celery_app.conf.timezone = 'America/Sao_Paulo'
