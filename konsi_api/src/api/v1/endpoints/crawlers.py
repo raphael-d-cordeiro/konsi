@@ -11,9 +11,9 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from konsi_api.src.celery_app import celery_app
-from konsi_api.src.models.crawler_model import CrawlerModel
-from konsi_api.src.schemas.crawler_schema import (
+from core.publisher import celery_app
+from models import CrawlerModel
+from schemas import (
     CrawlerSchemaPost, CrawlerSchemaResp
 )
 from core.deps import get_session
@@ -27,13 +27,12 @@ router = APIRouter()
             status_code=status.HTTP_200_OK)
 async def get_crawlers_result(
     task_id: str = Query(
-        default=None,
         title='Task id to get results'
     ),
     crawler_filter_result: str = Query(
         default=None,
         title='Filter results by BENEFITS',
-        examples=['BENEFITS_NUMBERS_ONLY']
+        example='BENEFITS_NUMBERS_ONLY'
     ),
         db: AsyncSession = Depends(get_session)):
 
