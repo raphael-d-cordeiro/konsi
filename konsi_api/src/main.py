@@ -3,8 +3,7 @@ import uvicorn
 from fastapi import FastAPI
 from core.create_table import create_tables
 
-from core.configs import settings
-from api.v1 import api_router
+from api.v1.endpoints import crawlers
 
 app = FastAPI(
     title='KONSI API',
@@ -12,7 +11,9 @@ app = FastAPI(
     description='REST API'
 )
 
-app.include_router(api_router, prefix=settings.API_V1_STR)
+app.include_router(
+    crawlers.router, prefix='/crawlers', tags=['crawlers']
+)
 
 if __name__ == '__main__':
     asyncio.run(create_tables())

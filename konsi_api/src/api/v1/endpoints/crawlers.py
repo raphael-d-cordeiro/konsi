@@ -2,7 +2,6 @@ from typing import List
 
 from fastapi import APIRouter
 from fastapi import HTTPException
-from fastapi.responses import JSONResponse
 from fastapi import status
 
 from fastapi import Query
@@ -10,6 +9,7 @@ from fastapi import Depends
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy import exc
 
 from core.publisher import celery_app
 from models import CrawlerModel
@@ -32,21 +32,27 @@ async def get_crawlers_result(
     ),
         db: AsyncSession = Depends(get_session)):
 
-    query = select(CrawlerModel).filter(CrawlerModel.task_id == task_id)
-    result = await db.execute(query)
-    results: List[CrawlerModel] = result.scalars().all()
+    try:
+        query = select(CrawlerModel).filter(CrawlerModel.task_id == task_id)
+        result = await db.execute(query)
+        results: List[CrawlerModel] = result.scalars().all()
 
-    if results:
-        if crawler_filter_result == 'BENEFITS_NUMBERS_ONLY':
-            for result in results:
-                result.crawler_data = {'beneficios': [
-                    x.get('nb') for x in results[0].crawler_data['beneficios']
-                ]}
-        return results
-    else:
+        if results:
+            if crawler_filter_result == 'BENEFITS_NUMBERS_ONLY':
+                for result in results:
+                    result.crawler_data = {'beneficios': [
+                        x.get('nb') for x in results[0].crawler_data['beneficios']
+                    ]}
+            return results
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail='not found!'
+            )
+    except exc.SQLAlchemyError:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail='customer not found!'
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Error getting crawler result!'
         )
 
 
@@ -61,7 +67,7 @@ async def post_crawler(request_body: CrawlerSchemaPost):
             'task_id': celery_task.id
         }
 
-        return JSONResponse(payload)
+        return payload
 
     except Exception:
         raise HTTPException(
