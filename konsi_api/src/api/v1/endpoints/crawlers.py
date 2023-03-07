@@ -41,7 +41,8 @@ async def get_crawlers_result(
             if crawler_filter_result == 'BENEFITS_NUMBERS_ONLY':
                 for result in results:
                     result.crawler_data = {'beneficios': [
-                        x.get('nb') for x in results[0].crawler_data['beneficios']
+                        x.get('nb')
+                        for x in results[0].crawler_data['beneficios']
                     ]}
             return results
         else:
@@ -60,7 +61,7 @@ async def get_crawlers_result(
 async def post_crawler(request_body: CrawlerSchemaPost):
     try:
         celery_task = celery_app.send_task(
-            'konsi_worker.src.tasks.run_crawler', args=[request_body.dict()]
+            'src.tasks.run_crawler', args=[request_body.dict()]
         )
         payload = {
             'message': 'placed a task to run in background',

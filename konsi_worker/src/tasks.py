@@ -1,9 +1,9 @@
 from typing import Dict, Any
 
-from konsi_worker.src.celery_worker import celery_app
-from konsi_worker.src.services import crawler
-from konsi_worker.src.core import DBConnection
-from konsi_worker.src.models import CrawlerModel
+from src.celery_worker import celery_app
+from src.services import crawler
+from src.core import DBConnection
+from src.models import CrawlerModel
 
 
 @celery_app.task(bind=True)
