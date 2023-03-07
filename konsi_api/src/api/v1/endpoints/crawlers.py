@@ -51,7 +51,7 @@ async def get_crawlers_result(
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED)
-async def post_customer(request_body: CrawlerSchemaPost):
+async def post_crawler(request_body: CrawlerSchemaPost):
     try:
         celery_task = celery_app.send_task(
             'konsi_worker.src.tasks.run_crawler', args=[request_body.dict()]

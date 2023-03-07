@@ -1,7 +1,7 @@
 import asyncio
 import uvicorn
 from fastapi import FastAPI
-from create_table import create_tables
+from core.create_table import create_tables
 
 from core.configs import settings
 from api.v1 import api_router
